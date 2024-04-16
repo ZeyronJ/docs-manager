@@ -1,9 +1,11 @@
-import Image from 'next/image';
+import React from 'react';
 
-export default function Home() {
+function DocumentosPage() {
   return (
     <div className='flex min-h-screen flex-col items-center justify-between p-24'>
-      Home
+      Documentos
     </div>
   );
 }
+
+export default DocumentosPage;
