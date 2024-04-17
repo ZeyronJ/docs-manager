@@ -1,6 +1,8 @@
 import { Inter } from 'next/font/google';
 import './globals.css';
 import SideNav from '@/components/SideNav';
+import MarginWidthWrapper from '@/components/MarginWidthWrapper';
+import PageWrapper from '@/components/PageWrapper';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -14,7 +16,9 @@ export default function RootLayout({ children }) {
     <html lang='en'>
       <body className={inter.className}>
         <SideNav />
-        {children}
+        <MarginWidthWrapper>
+          <PageWrapper>{children}</PageWrapper>
+        </MarginWidthWrapper>
       </body>
     </html>
   );

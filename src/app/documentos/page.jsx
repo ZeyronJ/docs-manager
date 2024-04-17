@@ -1,9 +1,11 @@
 import React from 'react';
+import Actions from '@/components/Actions';
 
 function DocumentosPage() {
   return (
-    <div className='flex min-h-screen flex-col items-center justify-between p-24'>
-      Documentos
+    <div className='pl-4 flex justify-between'>
+      <div>Documentos</div>
+      <Actions />
     </div>
   );
 }
