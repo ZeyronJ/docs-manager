@@ -1,10 +1,17 @@
-function Acciones() {
+import { useSelector } from 'react-redux';
+
+export default function Acciones() {
+  const item = useSelector((state) => state.item.selectedItem);
+
   return (
     <div className='bg-white h-screen w-56'>
       <div className='flex flex-col h-full justify-between'>
         <ul className='text-xl mt-40 font-semibold'>
           <li>
-            <button className='w-full text-left p-2 hover:bg-gray-300'>
+            <button
+              className='w-full text-left p-2 hover:bg-gray-300'
+              onClick={() => console.log(item)}
+            >
               Descargar/Abrir
             </button>
           </li>
@@ -29,5 +36,3 @@ function Acciones() {
     </div>
   );
 }
-
-export default Acciones;
