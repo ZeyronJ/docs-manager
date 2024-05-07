@@ -1,11 +1,7 @@
 import React from 'react';
 
 function NotificacionesPage() {
-  return (
-    <div className='flex min-h-screen flex-col items-center justify-between p-24'>
-      Notificaciones
-    </div>
-  );
+  return <div className='flex h-full'>Notificaciones</div>;
 }
 
 export default NotificacionesPage;

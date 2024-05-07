@@ -4,13 +4,15 @@ import SideNav from '@/components/SideNav';
 import MarginWidthWrapper from '@/components/MarginWidthWrapper';
 import PageWrapper from '@/components/PageWrapper';
 import Providers from '@/store/providers';
+import Header from '@/components/Header';
+import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'Pagina principal gestor de documentos',
+  title: 'Docs Manager',
   description:
-    'Gestor de documentos para la Facultad de Odontología de la Universidad de Chile',
+    'Pagina principal gestor de documentos para la Facultad de Odontología de la Universidad de Chile',
 };
 
 export default function RootLayout({ children }) {
@@ -20,8 +22,10 @@ export default function RootLayout({ children }) {
         <Providers>
           <SideNav />
           <MarginWidthWrapper>
+            <Header />
             <PageWrapper>{children}</PageWrapper>
           </MarginWidthWrapper>
+          <Toaster />
         </Providers>
       </body>
     </html>

@@ -2,8 +2,11 @@ import React from 'react';
 
 function OrganigramaPage() {
   return (
-    <div className='flex min-h-screen flex-col items-center justify-between p-24'>
-      Organigrama
+    <div className='h-full'>
+      <iframe
+        src='https://drive.google.com/file/d/1d5m75ha3VRmtPNss9tuOoV7mTKwNNOvW/preview'
+        className='w-full h-full'
+      ></iframe>
     </div>
   );
 }
