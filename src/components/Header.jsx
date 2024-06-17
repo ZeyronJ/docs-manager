@@ -3,29 +3,25 @@ import { useEffect, useState } from 'react';
 import { loginRequests } from '@/api/users';
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/store/slices/userSlice';
+import { toast } from 'react-hot-toast';
 
 export default function Header() {
   const [defaultUserId, setDefaultUserId] = useState(1);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const storedUser = window.localStorage.getItem('user');
-    if (storedUser) {
-      setDefaultUserId(storedUser ? JSON.parse(storedUser).id : 1);
-      dispatch(setUser(JSON.parse(storedUser)));
-    }
-  }, []);
-
   const handleLogin = async (email, password) => {
     try {
+      const toastLogin = toast.loading('Iniciando sesión...');
       const res = await loginRequests({ email, password });
       if (res.status === 201) {
+        toast.dismiss(toastLogin);
         localStorage.setItem('user', JSON.stringify(res.data));
         setDefaultUserId(res.data.id);
         dispatch(setUser(res.data));
       }
     } catch (error) {
       console.warn('Error al procesar la solicitud:', error);
+      toast.dismiss(toastLogin);
       if (error.response && error.response.status === 401) {
         alert('Usuario o contraseña incorrectos');
       } else {
@@ -33,6 +29,20 @@ export default function Header() {
       }
     }
   };
+
+  useEffect(() => {
+    const defaultLogin = async () => {
+      await handleLogin('usuario1@example.com', 'contraseña1');
+    };
+    const storedUser = window.localStorage.getItem('user');
+    if (storedUser) {
+      setDefaultUserId(JSON.parse(storedUser).id);
+      dispatch(setUser(JSON.parse(storedUser)));
+    } else {
+      defaultLogin();
+    }
+  }, []);
+
   const handleRol = async (e) => {
     const rol = e.target.value;
     switch (rol) {

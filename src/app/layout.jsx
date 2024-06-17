@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata = {
   title: 'Docs Manager',
   description:
-    'Pagina principal gestor de documentos para la Facultad de Odontología de la Universidad de Chile',
+    'Gestor de documentos para la Facultad de Odontología de la Universidad de Chile',
 };
 
 export default function RootLayout({ children }) {

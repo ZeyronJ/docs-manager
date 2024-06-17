@@ -25,22 +25,24 @@ function Acciones() {
         <div className='flex justify-center gap-x-2 mt-1'>
           <button
             className='bg-red-500 text-white px-2 py-1 rounded'
-            onClick={() => {
+            onClick={async () => {
+              dispatch(selectItem(null));
+              dispatch(
+                setItems(items.filter((item) => item.id !== selectedRow.id))
+              );
+              toast.dismiss(t.id);
               if (selectedRow.hasOwnProperty('path')) {
                 // console.log('eliminar archivo');
-                deleteDocumentsRequests(selectedRow.id);
-                dispatch(selectItem(null));
-                dispatch(
-                  setItems(items.filter((item) => item.id !== selectedRow.id))
-                );
+                const res = await deleteDocumentsRequests(selectedRow.id);
+                if (res.status !== 200) {
+                  toast.error('Error al eliminar el archivo');
+                }
               } else {
-                deleteFolderRequests(selectedRow.id);
-                dispatch(selectItem(null));
-                dispatch(
-                  setItems(items.filter((item) => item.id !== selectedRow.id))
-                );
+                const res = await deleteFolderRequests(selectedRow.id);
+                if (res.status !== 200) {
+                  toast.error('Error al eliminar la carpeta');
+                }
               }
-              toast.dismiss(t.id);
             }}
           >
             Si, eliminar

@@ -20,6 +20,8 @@ import { getUsersRequests } from '@/api/users';
 import { rootFoldersAndFiles } from '@/rules';
 import { Icon } from '@iconify/react';
 import { toast } from 'react-hot-toast';
+import { DateTime } from 'luxon';
+import Spinner from '@/components/Spinner';
 
 export default function DocumentosPage() {
   useEffect(() => {
@@ -28,8 +30,8 @@ export default function DocumentosPage() {
         const res = await getFoldersRequests();
         dispatch(setPath([res.data[0].id]));
         const res2 = await getDocumentsRequests();
-        dispatch(setItems([...res.data, ...res2.data]));
         const permisos = await getFolderPermissionsRequests();
+        dispatch(setItems([...res.data, ...res2.data]));
         dispatch(setPermisos(permisos.data));
       } catch (error) {
         console.error('Error al obtener los items', error);
@@ -68,8 +70,11 @@ export default function DocumentosPage() {
     {
       name: 'Creación',
       selector: (row) => {
-        const date = new Date(row.created);
-        return date.toLocaleString();
+        const localDateTime = DateTime.fromISO(row.created).toLocaleString({
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          ...DateTime.DATETIME_MED,
+        });
+        return localDateTime;
       },
       sortable: true,
     },
@@ -82,6 +87,14 @@ export default function DocumentosPage() {
       },
     },
   ];
+
+  const customStyles = {
+    headCells: {
+      style: {
+        fontWeight: 'bold', // Establece el peso de la fuente en negrita
+      },
+    },
+  };
 
   const handleRowClicked = (row) => {
     // Si la fila seleccionada es la misma, deseleccionarla
@@ -98,6 +111,7 @@ export default function DocumentosPage() {
     ev.preventDefault();
     // console.log(ev.target.folderName.value);
     const user = JSON.parse(localStorage.getItem('user'));
+    const loadingToast = toast.loading('Creando carpeta...');
     const res = await createFoldersRequests({
       name: ev.target.folderName.value,
       owner: user.id,
@@ -105,6 +119,7 @@ export default function DocumentosPage() {
       description: ev.target.description?.value,
     });
     if (res.status === 200) {
+      toast.dismiss(loadingToast);
       const newFolder = res.data.folder;
       dispatch(setItems([...items, newFolder]));
       const permisosAux = permisosCheckBox
@@ -121,6 +136,12 @@ export default function DocumentosPage() {
       dispatch(setPermisos([...permisos, ...newPermisos]));
     } else {
       console.error('Error al crear la carpeta:', res);
+      toast.dismiss(loadingToast);
+      toast.error('Error al crear la carpeta', {
+        style: {
+          background: '#fee', // Puedes cambiar el color de fondo aquí también
+        },
+      });
     }
     setOpenOptions(false);
     ev.target.reset();
@@ -168,7 +189,7 @@ export default function DocumentosPage() {
       <div className='flex flex-grow flex-col px-4'>
         {/* Botones de tabla */}
         {rootFoldersAndFiles(user, path) && (
-          <div className='flex justify-center mt-4'>
+          <div className='flex justify-center mt-2'>
             <form
               className='mr-4 flex items-center'
               onSubmit={handleSubmitFolder}
@@ -293,18 +314,24 @@ export default function DocumentosPage() {
                   .filter((permiso) => permiso.folder_id === row.id)
                   .find((permiso) => permiso.user_id === user.id)
               ) {
-                console.log(permisos);
                 dispatch(setPath([...path, row.id]));
                 dispatch(selectItem(null));
               } else {
+                // toast de 1 segundo
                 toast.error('Usuario no autorizado', {
                   style: {
                     background: '#fee', // Puedes cambiar el color de fondo aquí también
                   },
+                  duration: 2000,
                 });
               }
             }
           }}
+          pagination={data.length > 10}
+          paginationRowsPerPageOptions={[10, 15]}
+          customStyles={customStyles}
+          progressPending={data.length === 0}
+          progressComponent={<Spinner />}
         />
       </div>
       <Actions />
