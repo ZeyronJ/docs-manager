@@ -1,7 +1,6 @@
 import { pool } from '@/utils/dbconfig';
 import { NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
+import { uploadFileToS3 } from '@/utils/S3';
 
 export async function GET() {
   try {
@@ -21,16 +20,59 @@ export async function GET() {
 }
 
 export async function POST(req) {
-  const data = await req.formData(); // Obteniendo los datos del formulario enviado (doc, nombre, etc)
-  const file = data.get('documento'); // Obteniendo el archivo enviado
-  if (!file) return NextResponse.json('Falta la imagen', { status: 400 });
-  // Convertir el archivo a un buffer
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-  // Guardar archivo en el servidor
-  // const filePath = join(process.cwd(), 'public', file.name);
-  // await writeFile(filePath, buffer);
-  // Guardar archivo en S3
-
-  return NextResponse.json('imagen recibida');
+  try {
+    const data = await req.formData(); // Obteniendo los datos del formulario enviado (doc, nombre, etc)
+    const owner = data.get('owner'); // Obteniendo el id del usuario
+    const folder = data.get('folder'); // Obteniendo el id de la carpeta
+    if (!owner || !folder)
+      return res.status(400).send('Faltan datos obligatorios');
+    const file = data.get('documento'); // Obteniendo el archivo enviado
+    if (!file) return NextResponse.json('Falta la imagen', { status: 400 });
+    // Crear documento
+    const fileName = `${Date.now()}-${file.name}`;
+    const newDocument = await pool.query(
+      'INSERT INTO documents (key, owner, folder, name) VALUES ($1, $2, $3, $4) RETURNING *',
+      [fileName, owner, folder, file.name]
+    );
+    // Cambiar nombre del owner por el nombre del usuario
+    const ownerName = await pool.query('SELECT name FROM users WHERE id = $1', [
+      owner,
+    ]);
+    newDocument.rows[0].owner = ownerName.rows[0].name;
+    // console.log(file.name); // Nombre del archivo
+    // Convertir el archivo a un buffer
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    // Guardar archivo en el servidor
+    // const filePath = join(process.cwd(), 'public', file.name);
+    // await writeFile(filePath, buffer);
+    // Guardar archivo en S3
+    const fileN = await uploadFileToS3(buffer, fileName);
+    if (!fileN)
+      return NextResponse.json('Error al subir el archivo a S3', {
+        status: 500,
+      });
+    return NextResponse.json(
+      { document: newDocument.rows[0] },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        message: 'Error interno del servidor: POST documents',
+        error,
+      },
+      { status: 500 }
+    );
+  }
 }
+
+// const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
+// const AWS_BUCKET_REGION = process.env.AWS_BUCKET_REGION;
+// const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
+// const AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
+
+// console.log('AWS_BUCKET_NAME:', AWS_BUCKET_NAME);
+// console.log('AWS_BUCKET_REGION:', AWS_BUCKET_REGION);
+// console.log('AWS_ACCESS_KEY:', AWS_ACCESS_KEY);
+// console.log('AWS_SECRET_KEY:', AWS_SECRET_KEY);

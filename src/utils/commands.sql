@@ -17,14 +17,15 @@ CREATE TABLE folders (
 
 CREATE SEQUENCE document_id_seq START 10000;
 
+    -- id INTEGER PRIMARY KEY DEFAULT nextval('document_id_seq'),
+
 CREATE TABLE documents (
     id INTEGER PRIMARY KEY DEFAULT nextval('document_id_seq'),
+    key VARCHAR(255) NOT NULL,
     owner INTEGER REFERENCES users(id),
     folder INTEGER REFERENCES folders(id),
     name VARCHAR(255) NOT NULL,
-	  path VARCHAR(255) NOT NULL,
-    description VARCHAR(255),
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 );
 
 CREATE TABLE folder_permissions (

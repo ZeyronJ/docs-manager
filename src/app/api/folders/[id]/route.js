@@ -1,22 +1,6 @@
 import { pool } from '@/utils/dbconfig';
 import { NextResponse } from 'next/server';
-
-// export async function GET() {
-//   try {
-//     const folders = await pool.query('SELECT * FROM folders ORDER BY id ASC');
-//     const users = await pool.query('SELECT * FROM users');
-
-//     folders.rows.forEach((folder) => {
-//       const user = users.rows.find((user) => user.id === folder.owner);
-//       folder.owner = user.name;
-//     });
-
-//     return NextResponse.json(folders.rows);
-//   } catch (error) {
-//     console.error(error);
-//     return NextResponse.json('Error al obtener los folders', { status: 500 });
-//   }
-// }
+import { deleteFileFromS3 } from '@/utils/S3';
 
 export async function DELETE(req, { params }) {
   try {
@@ -30,6 +14,21 @@ export async function DELETE(req, { params }) {
   }
 }
 
+export async function PATCH(req, { params }) {
+  try {
+    const { newFolder } = await req.json();
+    // console.log(`newFolder: ${newFolder}, params.id: ${params.id}`);
+    await pool.query('UPDATE folders SET folder = $1 WHERE id = $2', [
+      newFolder,
+      params.id,
+    ]);
+    return NextResponse.json('folder movido correctamente', { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json('Error al mover el folder', { status: 500 });
+  }
+}
+
 const deleteInnerFolders = async (folder_id) => {
   const innerFolders = await pool.query(
     'SELECT * FROM folders WHERE folder = $1',
@@ -40,16 +39,17 @@ const deleteInnerFolders = async (folder_id) => {
       await deleteInnerFolders(folder.id);
     }
   }
-  // const innerDocuments = await pool.query(
-  //   'SELECT * FROM documents WHERE folder = $1',
-  //   [folder_id]
-  // );
-  // if (innerDocuments.rows.length > 0) {
-  //   for (const document of innerDocuments.rows) {
-  //     await fs.remove(document.path);
-  //     await pool.query('DELETE FROM documents WHERE id = $1', [document.id]);
-  //   }
-  // }
+  const innerDocuments = await pool.query(
+    'SELECT * FROM documents WHERE folder = $1',
+    [folder_id]
+  );
+  if (innerDocuments.rows.length > 0) {
+    for (const document of innerDocuments.rows) {
+      await deleteFileFromS3(document.key);
+      // await pool.query('DELETE FROM documents WHERE id = $1', [document.id]);
+    }
+    await pool.query('DELETE FROM documents WHERE folder = $1', [folder_id]);
+  }
   await pool.query('DELETE FROM folder_permissions WHERE folder_id = $1', [
     folder_id,
   ]);

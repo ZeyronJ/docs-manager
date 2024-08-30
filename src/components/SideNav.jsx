@@ -20,12 +20,12 @@ const SideNav = () => {
       subMenuItems:
         user?.rol !== 'funcionario'
           ? [
-              { title: 'Compartidos', path: '/documentos' },
+              { title: 'Compartidos', path: '/documentos/compartidos' },
               { title: 'Local', path: '/documentos/local' },
               { title: 'Oficiales', path: '/documentos/oficiales' },
             ]
           : [
-              { title: 'Compartidos', path: '/documentos' },
+              { title: 'Compartidos', path: '/documentos/compartidos' },
               { title: 'Oficiales', path: '/documentos/oficiales' },
             ],
     },
@@ -57,7 +57,7 @@ const SideNav = () => {
       <div className='flex flex-col space-y-6 w-full'>
         <Link href='/'>
           <Image
-            src='/logo-vertical.png'
+            src='/logo-vertical.png' // 308x318 -> 200x206
             alt='logo'
             width={200}
             height={206}

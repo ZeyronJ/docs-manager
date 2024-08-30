@@ -14,10 +14,10 @@ export const createDocumentsRequests = async (document) => {
 };
 
 export const downloadDocumentRequests = (id) =>
-  window.open('http://localhost:3000/api/documents/download/' + id);
+  window.open('http://localhost:3000/api/documents/' + id);
 
-export const editDocumentsRequests = async (id, datos) =>
-  await axios.put('http://localhost:3000/api/documents/' + id, datos);
+export const moveDocumentsRequests = async (id, datos) =>
+  await axios.patch('http://localhost:3000/api/documents/' + id, datos);
 
 export const deleteDocumentsRequests = async (id) =>
   await axios.delete('http://localhost:3000/api/documents/' + id);
