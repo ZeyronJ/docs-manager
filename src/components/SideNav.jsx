@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon } from '@iconify/react';
@@ -34,11 +34,23 @@ const SideNav = () => {
       path: '/organigrama',
       icon: <Icon icon='game-icons:organigram' width={24} height={24} />,
     },
-    {
-      title: 'Notificaciones',
-      path: '/notificaciones',
-      icon: <Icon icon='mingcute:notification-line' width={24} height={24} />,
-    },
+    ,
+    // {
+    //   title: 'Notificaciones',
+    //   path: '/notificaciones',
+    //   icon: <Icon icon='mingcute:notification-line' width={24} height={24} />,
+    // },
+    ...(user?.rol !== 'funcionario'
+      ? [
+          {
+            title: 'Notificaciones',
+            path: '/notificaciones',
+            icon: (
+              <Icon icon='mingcute:notification-line' width={24} height={24} />
+            ),
+          },
+        ]
+      : []),
     {
       title: 'Cuenta',
       path: '/cuenta',
@@ -83,6 +95,11 @@ const MenuItem = ({ item }) => {
   const toggleSubMenu = () => {
     setSubMenuOpen(!subMenuOpen);
   };
+  useEffect(() => {
+    if (pathname.includes(item.path)) {
+      setSubMenuOpen(true);
+    }
+  }, [pathname]);
 
   return (
     <div className=''>
@@ -90,8 +107,8 @@ const MenuItem = ({ item }) => {
         <>
           <button
             onClick={toggleSubMenu}
-            className={`flex p-2 rounded-lg w-full justify-between hover:bg-zinc-100 ${
-              pathname.includes(item.path) ? 'bg-zinc-100' : ''
+            className={`flex p-2 rounded-lg w-full justify-between hover:bg-zinc-200 ${
+              pathname.includes(item.path) ? 'bg-zinc-200' : ''
             }`}
           >
             <div className='flex flex-row space-x-2 items-center'>
@@ -125,8 +142,8 @@ const MenuItem = ({ item }) => {
       ) : (
         <Link
           href={item.path}
-          className={`flex flex-row space-x-4 items-center p-2 rounded-lg hover:bg-zinc-100 ${
-            item.path === pathname ? 'bg-zinc-100' : ''
+          className={`flex flex-row space-x-4 items-center p-2 rounded-lg hover:bg-zinc-200 ${
+            item.path === pathname ? 'bg-zinc-200' : ''
           }`}
         >
           <div className='flex flex-row space-x-2 items-center'>

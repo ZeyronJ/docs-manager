@@ -24,12 +24,22 @@ CREATE TABLE documents (
     key VARCHAR(255) NOT NULL,
     owner INTEGER REFERENCES users(id),
     folder INTEGER REFERENCES folders(id),
+    folderValidated INTEGER DEFAULT NULL,
     name VARCHAR(255) NOT NULL,
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    validated BOOLEAN DEFAULT FALSE,
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE folder_permissions (
     user_id INTEGER REFERENCES users(id),
     folder_id INTEGER REFERENCES folders(id),
     PRIMARY KEY (user_id, folder_id)
+);
+
+CREATE TABLE notifications (
+    id SERIAL PRIMARY KEY,
+    owner INTEGER REFERENCES users(id),
+    recipient INTEGER REFERENCES users(id),
+    message TEXT NOT NULL,
+    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

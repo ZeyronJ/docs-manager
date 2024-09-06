@@ -17,7 +17,16 @@ export const downloadDocumentRequests = (id) =>
   window.open('http://localhost:3000/api/documents/' + id);
 
 export const moveDocumentsRequests = async (id, datos) =>
-  await axios.patch('http://localhost:3000/api/documents/' + id, datos);
+  await axios.put('http://localhost:3000/api/documents/' + id, datos);
 
 export const deleteDocumentsRequests = async (id) =>
   await axios.delete('http://localhost:3000/api/documents/' + id);
+
+export const validateDocumentsRequests = async (id, datos) =>
+  await axios.patch('http://localhost:3000/api/documents/' + id, datos);
+
+export const getOficialDocumentsRequests = async () =>
+  await axios.get('http://localhost:3000/api/documents/oficiales');
+
+export const getLocalDocumentsRequests = async (id) =>
+  await axios.get(`http://localhost:3000/api/documents/locales/` + id);

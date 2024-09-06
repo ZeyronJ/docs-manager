@@ -9,7 +9,7 @@ function CuentaPage() {
       <Icon icon='mdi:account-outline' width={150} height={150} />
       <div className='w-48 grid grid-cols-2'>
         <strong>Nombre:</strong>
-        {user?.nombre}
+        {user?.name}
         <strong>Correo:</strong>
         {user?.email}
         <strong>Rol:</strong>

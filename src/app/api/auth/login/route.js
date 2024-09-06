@@ -35,7 +35,7 @@ export async function POST(req) {
     return NextResponse.json(
       {
         id: user.id,
-        nombre: user.name,
+        name: user.name,
         rol: user.rol,
         email: user.email,
       },

@@ -32,15 +32,16 @@ async function seed() {
     console.log('Secuencia document_id_seq creada.');
 
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS documents (
+      CREATE TABLE documents (
         id INTEGER PRIMARY KEY DEFAULT nextval('document_id_seq'),
+        key VARCHAR(255) NOT NULL,
         owner INTEGER REFERENCES users(id),
         folder INTEGER REFERENCES folders(id),
+        folderValidated INTEGER DEFAULT NULL,
         name VARCHAR(255) NOT NULL,
-        path VARCHAR(255) NOT NULL,
-        description VARCHAR(255),
+        validated BOOLEAN DEFAULT FALSE,
         created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      );
+    );
     `);
     console.log('Tabla documents creada.');
 
@@ -60,18 +61,25 @@ async function seed() {
     const hashedPassword5 = await bcrypt.hash('contraseña5', 10);
     await pool.query(`
     INSERT INTO users (name, email, password, rol) VALUES
-        ('decana1', 'usuario1@example.com', '${hashedPassword1}', 'decana'),
-        ('director1', 'usuario2@example.com', '${hashedPassword2}', 'director'),
-        ('secretaria1', 'usuario3@example.com', '${hashedPassword3}', 'secretaria'),
-        ('academico1', 'usuario4@example.com', '${hashedPassword4}', 'academico'),
-        ('funcionario1', 'usuario5@example.com', '${hashedPassword5}', 'funcionario');
+        ('decana', 'usuario1@example.com', '${hashedPassword1}', 'decana'),
+        ('director', 'usuario2@example.com', '${hashedPassword2}', 'director'),
+        ('secretaria', 'usuario3@example.com', '${hashedPassword3}', 'secretaria'),
+        ('académico', 'usuario4@example.com', '${hashedPassword4}', 'academico'),
+        ('funcionario', 'usuario5@example.com', '${hashedPassword5}', 'funcionario');
     `);
     console.log('Datos de usuarios insertados correctamente.');
 
     await pool.query(`
-      INSERT INTO folders (owner, name) VALUES (1, 'Raíz');
+      INSERT INTO folders (owner, name) VALUES 
+        (1, 'Raíz'),
+        (1, 'Raíz validados'),
+        (1, 'Decana'),
+        (2, 'Director'),
+        (3, 'Secretaria'),
+        (4, 'Académico'),
+        (5, 'Funcionario');
     `);
-    console.log('Carpeta raíz insertada correctamente.');
+    console.log('Carpetas raíces creadas correctamente.');
     return;
   } catch (error) {
     console.error('Error al realizar el proceso de seed:', error);

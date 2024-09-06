@@ -10,6 +10,9 @@ export async function GET() {
       const user = users.rows.find((user) => user.id === folder.owner);
       folder.owner = user.name;
     });
+    // const folders = await pool.query(
+    //   'SELECT folders.*, users.name AS owner_name FROM folders JOIN users ON folders.owner = users.id'
+    // );
 
     return NextResponse.json(folders.rows);
   } catch (error) {

@@ -14,10 +14,10 @@ export default function Header() {
       const toastLogin = toast.loading('Iniciando sesión...');
       const res = await loginRequests({ email, password });
       if (res.status === 201) {
-        toast.dismiss(toastLogin);
         localStorage.setItem('user', JSON.stringify(res.data));
         setDefaultUserId(res.data.id);
         dispatch(setUser(res.data));
+        toast.dismiss(toastLogin);
       }
     } catch (error) {
       console.warn('Error al procesar la solicitud:', error);
@@ -47,27 +47,27 @@ export default function Header() {
     const rol = e.target.value;
     switch (rol) {
       case '1':
-        console.log('Decana');
+        // console.log('Decana');
         await handleLogin('usuario1@example.com', 'contraseña1');
         break;
       case '2':
-        console.log('Director');
+        // console.log('Director');
         await handleLogin('usuario2@example.com', 'contraseña2');
         break;
       case '3':
-        console.log('Secretaria');
+        // console.log('Secretaria');
         await handleLogin('usuario3@example.com', 'contraseña3');
         break;
       case '4':
-        console.log('Académico');
+        // console.log('Académico');
         await handleLogin('usuario4@example.com', 'contraseña4');
         break;
       case '5':
-        console.log('Funcionario');
+        // console.log('Funcionario');
         await handleLogin('usuario5@example.com', 'contraseña5');
         break;
       default:
-        console.log('Rol no encontrado');
+        // console.log('Rol no encontrado');
         break;
     }
   };

@@ -12,6 +12,9 @@ export async function GET() {
       const user = users.rows.find((user) => user.id === document.owner);
       document.owner = user.name;
     });
+    // const documents = await pool.query(
+    //   'SELECT documents.*, users.name AS owner_name FROM documents JOIN users ON documents.owner = users.id'
+    // );
     return NextResponse.json(documents.rows);
   } catch (error) {
     console.error('Error al obtener los documents', error);
@@ -66,13 +69,3 @@ export async function POST(req) {
     );
   }
 }
-
-// const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
-// const AWS_BUCKET_REGION = process.env.AWS_BUCKET_REGION;
-// const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
-// const AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
-
-// console.log('AWS_BUCKET_NAME:', AWS_BUCKET_NAME);
-// console.log('AWS_BUCKET_REGION:', AWS_BUCKET_REGION);
-// console.log('AWS_ACCESS_KEY:', AWS_ACCESS_KEY);
-// console.log('AWS_SECRET_KEY:', AWS_SECRET_KEY);

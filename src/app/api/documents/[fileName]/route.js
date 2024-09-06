@@ -34,17 +34,55 @@ export async function DELETE(req, { params }) {
   }
 }
 
-export async function PATCH(req, { params }) {
+export async function PUT(req, { params }) {
   try {
-    const { newFolder } = await req.json();
-    // console.log(`newFolder: ${newFolder}, params.id: ${params.id}`);
-    await pool.query('UPDATE documents SET folder = $1 WHERE key = $2', [
-      newFolder,
-      params.fileName,
-    ]);
-    return NextResponse.json('documento movido correctamente', { status: 200 });
+    const { newFolder, newFolderValidated } = await req.json();
+    if (!params.fileName) {
+      return NextResponse.json('File name is required', { status: 400 });
+    }
+    console.log(
+      `newFolder: ${newFolder}, params.id: ${params.fileName}, newFolderValidated: ${newFolderValidated}`
+    );
+    if (newFolder) {
+      console.log('se cambia la carpeta');
+      await pool.query('UPDATE documents SET folder = $1 WHERE key = $2', [
+        newFolder,
+        params.fileName,
+      ]);
+    } else {
+      console.log('se cambia la carpeta validada');
+      await pool.query(
+        'UPDATE documents SET folderValidated = $1 WHERE key = $2',
+        [newFolderValidated, params.fileName]
+      );
+    }
+
+    return NextResponse.json('documento movido correctamente', {
+      status: 200,
+    });
   } catch (error) {
     console.error(error);
-    return NextResponse.json('Error al mover el documento', { status: 500 });
+    return NextResponse.json('Error al mover el documento', {
+      status: 500,
+    });
+  }
+}
+
+export async function PATCH(req, { params }) {
+  try {
+    if (!params.fileName) {
+      return NextResponse.json('File name/id is required', { status: 400 });
+    }
+    const { validate } = await req.json();
+    await pool.query('UPDATE documents SET validated = $1 WHERE id = $2', [
+      validate,
+      params.fileName,
+    ]);
+    return NextResponse.json('documento validado correctamente', {
+      status: 200,
+    });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json('Error al validar el documento', { status: 500 });
   }
 }

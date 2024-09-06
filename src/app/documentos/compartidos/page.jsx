@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Actions from '@/components/Actions';
 import DataTable from 'react-data-table-component';
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,64 +11,61 @@ import {
   setSelectedFolder,
 } from '@/store/slices/itemSlice';
 import {
-  getFoldersRequests,
   createFoldersRequests,
   createFolderPermissionsRequests,
-  getFolderPermissionsRequests,
 } from '@/api/folders';
-import { getDocumentsRequests, createDocumentsRequests } from '@/api/documents';
-import { getUsersRequests } from '@/api/users';
+import { createDocumentsRequests } from '@/api/documents';
 import { rootFoldersAndFiles } from '@/rules';
 import { Icon } from '@iconify/react';
 import { toast } from 'react-hot-toast';
 import { DateTime } from 'luxon';
 import Spinner from '@/components/Spinner';
+import useFetchData from '@/hooks/useFetchData';
+import { hasPermissions } from '@/rules';
 
 export default function DocumentosPage() {
   const dispatch = useDispatch();
   const path = useSelector((state) => state.item.path);
   const permisos = useSelector((state) => state.item.permisos);
-  const items = useSelector((state) => state.item.items);
   const user = useSelector((state) => state.user.user);
   const [selectedRow, setSelectedRow] = useState(null); // Necesario? ya tengo selectedItem
-  const [users, setUsers] = useState([]);
-  const [permisosCheckBox, setPermisosCheckBox] = useState([]);
   const [openOptions, setOpenOptions] = useState(false);
   const buttonRef = useRef(null);
-  const [loading, setLoading] = useState(true);
+  const { items, loading, users, permisosCheckBox, setPermisosCheckBox } =
+    useFetchData({ type: 'compartidos' });
 
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const res = await getFoldersRequests();
-        dispatch(setPath([res.data[0].id]));
-        const res2 = await getDocumentsRequests();
-        const permisos = await getFolderPermissionsRequests();
-        dispatch(setItems([...res.data, ...res2.data]));
-        dispatch(setPermisos(permisos.data));
-        setLoading(false);
-      } catch (error) {
-        console.error('Error al obtener los items', error);
-      }
-    };
-    fetchItems();
-    const fetchUsers = async () => {
-      const res = await getUsersRequests();
-      setUsers(res.data);
-      const array = res.data.map((user) => ({ id: user.id, checked: true }));
-      setPermisosCheckBox(array);
-    };
-    fetchUsers();
-  }, []);
+  // useEffect(() => {
+  //   const fetchItems = async () => {
+  //     try {
+  //       const res = await getFoldersRequests();
+  //       dispatch(setPath([res.data[0].id]));
+  //       const res2 = await getDocumentsRequests();
+  //       const permisos = await getFolderPermissionsRequests();
+  //       dispatch(setItems([...res.data, ...res2.data]));
+  //       dispatch(setPermisos(permisos.data));
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.error('Error al obtener los items', error);
+  //     }
+  //   };
+  //   fetchItems();
+  //   const fetchUsers = async () => {
+  //     const res = await getUsersRequests();
+  //     setUsers(res.data);
+  //     const array = res.data.map((user) => ({ id: user.id, checked: true }));
+  //     setPermisosCheckBox(array);
+  //   };
+  //   fetchUsers();
+  // }, []);
 
-  useEffect(() => {
-    const selectedFolder = items.find(
-      (item) => !item.hasOwnProperty('key') && item.id === path[path.length - 1]
-    );
-    if (selectedFolder) {
-      dispatch(setSelectedFolder(selectedFolder));
-    }
-  }, [path, items, dispatch]);
+  // useEffect(() => {
+  //   const selectedFolder = items.find(
+  //     (item) => !item.hasOwnProperty('key') && item.id === path[path.length - 1]
+  //   );
+  //   if (selectedFolder) {
+  //     dispatch(setSelectedFolder(selectedFolder));
+  //   }
+  // }, [path, items, dispatch]);
 
   const columns = [
     {
@@ -94,11 +91,24 @@ export default function DocumentosPage() {
 
   const conditionalRowStyles = [
     {
+      when: (row) => row.validated === true,
+      style: {
+        backgroundColor: '#d1f5d3',
+      },
+    },
+    {
       when: (row) => selectedRow === row,
       style: {
         backgroundColor: '#e3e3e3',
       },
     },
+    // {
+    //   when: (row) => row.validated === true && selectedRow === row,
+    //   style: {
+    //     color: 'green',
+    //     backgroundColor: '#e3e3e3',
+    //   },
+    // },
   ];
 
   const customStyles = {
@@ -195,8 +205,8 @@ export default function DocumentosPage() {
       })
     );
   };
-
   const data = items.filter((item) => item.folder === path[path.length - 1]);
+  // console.log(data);
 
   return (
     <div className='flex justify-between h-full'>
@@ -217,13 +227,13 @@ export default function DocumentosPage() {
               />
               <button
                 type='submit'
-                className='border border-black rounded p-2 hover:bg-zinc-100'
+                className='border border-black rounded p-2 hover:bg-zinc-100 transition-colors'
                 ref={buttonRef}
               >
                 Crear carpeta
               </button>
               <button
-                className='border border-black rounded p-2 hover:bg-zinc-100'
+                className='border border-black rounded p-2 hover:bg-zinc-100 transition-colors'
                 type='button'
                 onClick={() => setOpenOptions(!openOptions)}
               >
@@ -271,7 +281,7 @@ export default function DocumentosPage() {
             <form className='flex items-center'>
               <label
                 htmlFor='documento'
-                className='bg-violet-50 font-semibold text-violet-700 text-base py-2 px-4 rounded-full border-0 hover:bg-violet-100 block hover:cursor-pointer'
+                className='bg-violet-100 font-semibold text-violet-700 text-base py-2 px-4 rounded-full border-0 hover:bg-violet-200 block transition-colors hover:cursor-pointer'
               >
                 Subir archivo
               </label>
@@ -289,7 +299,7 @@ export default function DocumentosPage() {
         )}
 
         {/* Ruta de navegación */}
-        <div className='bg-white border-x mt-2 h-8 pl-2 text-center font-semibold'>
+        <div className='bg-white border-x mt-2 h-8 pl-2 text-center font-semibold select-none'>
           <h1
             className='cursor-pointer inline-block text-xl hover:bg-zinc-100 p-1 px-2 rounded-lg'
             onClick={() => {
@@ -314,7 +324,7 @@ export default function DocumentosPage() {
         </div>
         {/* Tabla */}
         <DataTable
-          className='border shadow'
+          className='border shadow select-none'
           columns={columns}
           data={data}
           highlightOnHover
@@ -323,11 +333,7 @@ export default function DocumentosPage() {
           conditionalRowStyles={conditionalRowStyles}
           onRowDoubleClicked={(row) => {
             if (!row.hasOwnProperty('key')) {
-              if (
-                permisos
-                  .filter((permiso) => permiso.folder_id === row.id)
-                  .find((permiso) => permiso.user_id === user.id)
-              ) {
+              if (hasPermissions(permisos, row, user)) {
                 dispatch(setPath([...path, row.id]));
                 dispatch(setSelectedFolder(row));
                 dispatch(selectItem(null));
