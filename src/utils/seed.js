@@ -80,6 +80,16 @@ async function seed() {
         (5, 'Funcionario');
     `);
     console.log('Carpetas raíces creadas correctamente.');
+
+    await pool.query(`
+      CREATE TABLE notifications (
+        id SERIAL PRIMARY KEY,
+        owner INTEGER REFERENCES users(id),
+        recipient INTEGER REFERENCES users(id),
+        message TEXT NOT NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
     return;
   } catch (error) {
     console.error('Error al realizar el proceso de seed:', error);

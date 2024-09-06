@@ -243,15 +243,19 @@ function Acciones() {
                 }
                 disabled={!(moving || selectedRow)}
                 onClick={() => {
-                  if (hasPermissions(permisos, selectedRow, user)) {
-                    handleMove(selectedRow);
+                  if (!moving && !selectedRow.hasOwnProperty('key')) {
+                    if (hasPermissions(permisos, selectedRow, user)) {
+                      handleMove(selectedRow);
+                    } else {
+                      toast.error('Usuario no autorizado', {
+                        style: {
+                          background: '#fee', // Puedes cambiar el color de fondo aquí también
+                        },
+                        duration: 2000,
+                      });
+                    }
                   } else {
-                    toast.error('Usuario no autorizado', {
-                      style: {
-                        background: '#fee', // Puedes cambiar el color de fondo aquí también
-                      },
-                      duration: 2000,
-                    });
+                    handleMove(selectedRow);
                   }
                 }}
               >

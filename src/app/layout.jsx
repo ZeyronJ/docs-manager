@@ -20,13 +20,12 @@ export default function RootLayout({ children }) {
     <html lang='en'>
       <body className={`${inter.className} h-screen`}>
         <Providers>
+          <Toaster />
           <SideNav />
           <MarginWidthWrapper>
             <Header />
             <PageWrapper>{children}</PageWrapper>
           </MarginWidthWrapper>
-
-          <Toaster />
         </Providers>
       </body>
     </html>
