@@ -6,16 +6,16 @@ import {
 } from '@aws-sdk/client-s3';
 
 const client = new S3Client({
-  region: process.env.AWS_BUCKET_REGION,
+  region: process.env.AWS_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_MY,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
 
 export async function uploadFileToS3(file, fileName) {
   const uploadParams = {
-    Bucket: process.env.AWS_BUCKET_NAME,
+    Bucket: process.env.S3_BUCKET_NAME,
     Key: fileName,
     Body: file,
   };
@@ -29,7 +29,7 @@ export async function uploadFileToS3(file, fileName) {
 
 export async function getFileFromS3(fileName) {
   const command = new GetObjectCommand({
-    Bucket: process.env.AWS_BUCKET_NAME,
+    Bucket: process.env.S3_BUCKET_NAME,
     Key: fileName,
   });
   const response = await client.send(command);
@@ -40,7 +40,7 @@ export async function getFileFromS3(fileName) {
 
 export async function deleteFileFromS3(fileName) {
   const command = new DeleteObjectCommand({
-    Bucket: process.env.AWS_BUCKET_NAME,
+    Bucket: process.env.S3_BUCKET_NAME,
     Key: fileName,
   });
 
