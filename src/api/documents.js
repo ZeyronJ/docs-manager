@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
-console.log(baseURL);
+// console.log(baseURL);
 
 export const getDocumentsRequests = async () =>
   await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/documents`);

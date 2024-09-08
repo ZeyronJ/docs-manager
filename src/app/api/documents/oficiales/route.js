@@ -13,7 +13,11 @@ export async function GET() {
       const user = users.rows.find((user) => user.id === document.owner);
       document.owner = user.name;
     });
-    return NextResponse.json(documents.rows);
+
+    // Aquí puedes agregar las cabeceras a la respuesta
+    const response = NextResponse.json(documents.rows);
+    response.headers.set('Cache-Control', 'no-store, max-age=0'); // Desactiva el caché
+    return response;
   } catch (error) {
     console.error('Error al obtener los documents', error);
     return NextResponse.json('Error interno del servidor', { status: 500 });
