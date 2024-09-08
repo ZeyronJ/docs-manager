@@ -38,8 +38,17 @@ export const validateDocumentsRequests = async (id, datos) =>
     datos
   );
 
-export const getOficialDocumentsRequests = async () =>
-  await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/documents/oficiales`);
+export const getOficialDocumentsRequests = async () => {
+  // Genera un parámetro único para evitar caché
+  const uniqueParam = new Date().getTime();
+
+  // Realiza la solicitud con el parámetro único
+  const response = await axios.get(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/documents/oficiales?timestamp=${uniqueParam}`
+  );
+
+  return response;
+};
 
 export const getLocalDocumentsRequests = async (id) =>
   await axios.get(
