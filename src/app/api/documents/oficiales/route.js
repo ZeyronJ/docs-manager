@@ -14,12 +14,20 @@ export async function GET() {
       document.owner = user.name;
     });
 
-    // Aquí puedes agregar las cabeceras a la respuesta
+    // Crea la respuesta
     const response = NextResponse.json(documents.rows);
-    response.headers.set('Cache-Control', 'no-store, max-age=0'); // Desactiva el caché
+
+    // Configura las cabeceras para desactivar el caché
+    response.headers.set(
+      'Cache-Control',
+      'no-store, no-cache, must-revalidate'
+    );
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+
     return response;
   } catch (error) {
-    console.error('Error al obtener los documents', error);
+    console.error('Error al obtener los documentos', error);
     return NextResponse.json('Error interno del servidor', { status: 500 });
   }
 }
