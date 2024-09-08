@@ -6,7 +6,7 @@ export async function GET() {
     const documents = await pool.query(
       'SELECT * FROM documents WHERE validated = true'
     );
-    console.log(documents);
+    console.log(documents.rows);
     const users = await pool.query('SELECT * FROM users');
 
     documents.rows.forEach((document) => {

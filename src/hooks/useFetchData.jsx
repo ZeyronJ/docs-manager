@@ -43,6 +43,7 @@ const useFetchData = (options = {}) => {
           obtainedItems = [...resFolders.data, ...resDocuments.data];
         } else if (type === 'oficiales') {
           dispatch(setPath([resFolders.data[1].id]));
+          console.log('llamando a oficiales');
           const resDocuments = await getOficialDocumentsRequests();
           obtainedItems = [...resFolders.data, ...resDocuments.data];
         } else if (type === 'locales') {
