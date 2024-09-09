@@ -13,7 +13,7 @@ import {
 } from '@/api/folders';
 import {
   getDocumentsRequests,
-  getOficialDocumentsRequests,
+  // getOficialDocumentsRequests,
   getLocalDocumentsRequests,
 } from '@/api/documents';
 import { getUsersRequests } from '@/api/users';
@@ -47,7 +47,7 @@ const useFetchData = (options = {}) => {
           // const resDocuments = await getOficialDocumentsRequests();
           // dispatch(setPath([resFolders.data[0].id]));
           let resDocuments = await getDocumentsRequests();
-          console.log(resDocuments.data);
+          // console.log(resDocuments.data);
           resDocuments = resDocuments.data.filter(
             (doc) => doc.validated === true
           );
