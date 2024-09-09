@@ -43,10 +43,15 @@ const useFetchData = (options = {}) => {
           obtainedItems = [...resFolders.data, ...resDocuments.data];
         } else if (type === 'oficiales') {
           dispatch(setPath([resFolders.data[1].id]));
-          console.log('llamando a oficiales');
-          const resDocuments = await getOficialDocumentsRequests();
-          console.log(resDocuments);
-          obtainedItems = [...resFolders.data, ...resDocuments.data];
+          // console.log('llamando a oficiales');
+          // const resDocuments = await getOficialDocumentsRequests();
+          // dispatch(setPath([resFolders.data[0].id]));
+          let resDocuments = await getDocumentsRequests();
+          console.log(resDocuments.data);
+          resDocuments = resDocuments.data.filter(
+            (doc) => doc.validated === true
+          );
+          obtainedItems = [...resFolders.data, ...resDocuments];
         } else if (type === 'locales') {
           dispatch(setPath([resFolders.data[user.id + 1].id]));
           const resDocuments = await getLocalDocumentsRequests(user.id);
