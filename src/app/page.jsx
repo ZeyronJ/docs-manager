@@ -2,7 +2,7 @@ export default function Home() {
   return (
     <div className='flex flex-col items-center justify-between'>
       <div className='p-6 bg-white shadow-lg rounded-lg h-full '>
-        <h1 className='text-2xl font-bold mb-4'>Descripción del Sistema of</h1>
+        <h1 className='text-2xl font-bold mb-4'>Descripción del Sistema</h1>
         <p className='mb-6'>
           Hemos realizado una actualización integral del sistema de gestión de
           documentos para la Facultad de Odontología de la Universidad de Chile.
