@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sistema de Gestión de Documentos - Facultad de Odontología, Universidad de Chile
 
-## Getting Started
+Este proyecto consiste en una actualización integral del sistema de gestión de documentos para la Facultad de Odontología de la Universidad de Chile. La actualización incluye mejoras en el diseño de la interfaz y la migración tecnológica hacia **Next.js** y **AWS S3** para almacenamiento en la nube.
 
-First, run the development server:
+## Descripción del Sistema
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Hemos realizado una mejora significativa en el diseño de la interfaz, haciendo que las secciones sean más claras y fáciles de navegar. Además, se han actualizado las tecnologías del sistema, migrando a **Next.js** y utilizando **AWS** para un almacenamiento seguro de archivos en la nube.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Secciones del Sistema
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- **Documentos Compartidos** (`/documentos/compartidos`): En esta sección se gestionan los documentos generales del sistema. Los usuarios tienen la capacidad de validar documentos.
+  
+- **Documentos Locales** (`/documentos/local`): Permite a cada usuario gestionar sus propios documentos de manera independiente, con espacio de almacenamiento personal.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **Documentos Oficiales** (`/documentos/oficiales`): Aquí se almacenan los documentos validados y firmados por la decana. Los documentos validados en la sección de compartidos también se muestran aquí.
 
-## Learn More
+- **Organigrama** (`/organigrama`): Sección dedicada a la visualización del organigrama institucional.
 
-To learn more about Next.js, take a look at the following resources:
+- **Notificaciones** (`/notificaciones`): Los usuarios pueden gestionar las notificaciones, tanto enviadas como recibidas.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Cuenta** (`/cuenta`): Aquí se pueden ver los detalles del perfil del usuario actual.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **Usuarios del Sistema** (`/cuenta/usuarios`): Permite gestionar los usuarios del sistema. Esta funcionalidad está deshabilitada en la demo.
 
-## Deploy on Vercel
+## Login Simplificado
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+El proceso de login ha sido simplificado para facilitar la prueba del sistema. No es necesario ingresar un correo o contraseña, simplemente haz clic en el botón en la esquina superior derecha para acceder.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Tabla de Permisos
+
+| Permisos | Decana | Director | Secretaria | Académico | Funcionario |
+|----------|--------|----------|------------|-----------|-------------|
+| Crear carpetas y subir archivos | ✔️ | ✔️ | ✔️ | ✔️ | ❌ |
+| Crear carpetas o subir archivos en raíz de compartidos y oficiales | ✔️ | ❌ | ❌ | ❌ | ❌ |
+| Descargar archivos | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| Abrir carpetas permitidas | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| Mover carpetas permitidas | ✔️ | ✔️ | ✔️ | ✔️ | ❌ |
+| Eliminar carpetas permitidas y archivos | ✔️ | ✔️ | ✔️ | ✔️ | ❌ |
+| Validar/invalidar | ✔️ | ✔️ | ❌ | ❌ | ❌ |
+| Acceder a Documentos Compartidos | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| Acceder a Documentos Locales | ✔️ | ✔️ | ✔️ | ❌ | ❌ |
+| Acceder a Documentos Oficiales | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| Acceder a Organigrama | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| Acceder a Notificaciones | ✔️ | ✔️ | ✔️ | ✔️ | ❌ |
+| Acceder a Perfil de cuenta | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| Acceder a Usuarios | ✔️ | ❌ | ❌ | ❌ | ❌ |
+
