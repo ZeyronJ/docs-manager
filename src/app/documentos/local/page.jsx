@@ -105,18 +105,16 @@ export default function DocumentosPage() {
       toast.dismiss(loadingToast);
       const newFolder = res.data.folder;
       dispatch(setItems([...items, newFolder]));
-      const permisosAux = permisosCheckBox
-        .filter((permiso) => permiso.checked)
-        .map((permiso) => permiso.id);
       await createFolderPermissionsRequests({
         folder_id: newFolder.id,
-        users_id: permisosAux,
+        users_id: [user.id],
       });
-      const newPermisos = permisosAux.map((permiso) => ({
-        user_id: permiso,
-        folder_id: newFolder.id,
-      }));
-      dispatch(setPermisos([...permisos, ...newPermisos]));
+      dispatch(
+        setPermisos([
+          ...permisos,
+          { user_id: user.id, folder_id: newFolder.id },
+        ])
+      );
     } else {
       console.error('Error al crear la carpeta:', res);
       toast.dismiss(loadingToast);
@@ -154,17 +152,6 @@ export default function DocumentosPage() {
       console.error('Error al subir el archivo:', error);
     }
   };
-
-  const handleCheckBox = (id) => {
-    setPermisosCheckBox((prevState) =>
-      prevState.map((permiso) => {
-        if (permiso.id === id) {
-          return { id, checked: !permiso.checked };
-        }
-        return permiso;
-      })
-    );
-  };
   // console.log('items:', items);
   // console.log(path[path.length - 1]);
   const data = items.filter((item) => item.folder === path[path.length - 1]);
@@ -193,51 +180,6 @@ export default function DocumentosPage() {
               >
                 Crear carpeta
               </button>
-              <button
-                className='border border-black rounded p-2 hover:bg-zinc-100 transition-colors'
-                type='button'
-                onClick={() => setOpenOptions(!openOptions)}
-              >
-                <Icon
-                  icon='vscode-icons:file-type-config'
-                  width={24}
-                  height={24}
-                />
-              </button>
-              {/* Dropdown menu */}
-              {openOptions && (
-                <div
-                  className='absolute z-10 bg-white rounded p-2 shadow'
-                  style={{
-                    top:
-                      buttonRef.current.offsetTop +
-                      buttonRef.current.offsetHeight,
-                    left: buttonRef.current.offsetLeft,
-                  }}
-                >
-                  <textarea
-                    type='text'
-                    name='description'
-                    placeholder='Descripción'
-                    className='p-2 border border-gray-300 rounded focus:outline-blue-300 resize-none'
-                    rows={4}
-                  />
-                  <p>Permisos</p>
-                  {users.map((user) => (
-                    <div key={user.id} className='flex items-center'>
-                      <input
-                        type='checkbox'
-                        defaultChecked
-                        id={user.id}
-                        onChange={() => handleCheckBox(user.id)}
-                      />
-                      <label htmlFor={user.id} className='ml-2'>
-                        {user.name}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              )}
             </form>
             <form className='flex items-center'>
               <label
